@@ -1,24 +1,36 @@
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 export default function Person({ ownersList }) {
 	const router = useRouter();
 	const { query } = useRouter();
-	console.log(router.query);
-	return (
-		// <>
-		// 	<h2>
-		// 		{router.query.person} Of {router.query.vehicls}
-		// 	</h2>
-		// 	<div>{JSON.stringify(query)}</div>
-		// </>
-		<pre>{JSON.stringify(ownersList, null, 4)}</pre>
-	);
+	const [owners, setOwners] = useState(ownersList);
+	useEffect(() => {
+		async function loadData() {
+			const responcse = await fetch(
+				"https://jsonplaceholder.typicode.com/posts/" + router.query.vehicls
+			);
+			const ownersList = await responcse.json();
+			setOwners(ownersList);
+		}
+
+		if (ownersList.length == 0) {
+			loadData();
+		}
+	}, []);
+
+	console.log(owners);
+
+	if (!owners) {
+		return <div>Loading ....</div>;
+	}
+	return <pre>{owners.body}</pre>;
 }
 
 Person.getInitialProps = async (ctx) => {
-	// if (!ctx.req) {
-	// 	return { ownersList: [] };
-	// }
+	if (!ctx.req) {
+		return { ownersList: [] };
+	}
 
 	const { query } = ctx;
 	const responcse = await fetch(
