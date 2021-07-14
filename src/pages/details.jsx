@@ -1,21 +1,27 @@
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
-const peaple = [
-	{ v: "car", name: "ali" },
-	{ v: "car", name: "ali" },
-	{ v: "car", name: "ali" },
-	{ v: "bike", name: "reza" },
-	{ v: "airplan", name: "ahmad" },
-];
+export default function Details({ ownersList }) {
+	// const [owners, setOwners] = useState([]);
+	// useEffect(() => {
+	// 	async function loadData() {
+	// 		const responcse = await fetch(
+	// 			"https://jsonplaceholder.typicode.com/posts"
+	// 		);
+	// 		const ownersList = await responcse.json();
+	// 		setOwners(ownersList);
+	// 	}
 
-export default function Details() {
+	// 	loadData();
+	// }, []);
+
 	return (
 		<div>
-			{peaple.map((e) => (
-				<div>
-					<Link as={`/${e.v}/${e.name}`} href="/[vehicle]/[person]">
+			{ownersList.map((e) => (
+				<div key={e.id}>
+					<Link as={`/${e.id}/${e.title}`} href="/[vehicle]/[person]">
 						<a>
-							Navigate to {e.name} of {e.v}
+							Navigate to {e.title} of {e.id}
 						</a>
 					</Link>
 				</div>
@@ -23,3 +29,9 @@ export default function Details() {
 		</div>
 	);
 }
+
+Details.getInitialProps = async () => {
+	const responcse = await fetch("https://jsonplaceholder.typicode.com/posts");
+	const ownersList = await responcse.json();
+	return { ownersList: ownersList };
+};
